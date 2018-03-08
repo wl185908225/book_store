@@ -12,7 +12,7 @@
 */
 Route::get('/',  'View\MemberController@index');
 Route::get('/login', 'View\MemberController@toLogin');
-Route::get('/register', 'View\MemberController@toRegister');
+Route::get('/register', 'View\MemberController@toRegister')->middleware('web');
 Route::get('/category', 'View\BookController@toCatetory');
 Route::get('/product/category_id/{category_id}', 'View\BookController@toProduct');
 Route::get('/product/{product_id}', 'View\BookController@toPdtContent');
@@ -22,7 +22,7 @@ Route::get('/cart', 'View\CartController@toCart');
 Route::group(['prefix' => 'service'], function(){
     Route::get('/validate_code/create', 'Service\ValidateController@create');
     Route::post('/validate_phone/send', 'Service\ValidateController@sendSMS');
-    Route::post('/validate_email', 'Service\ValidateController@validateEmail');
+    Route::get('/validate_email', 'Service\ValidateController@validateEmail');
     Route::post('/register', 'Service\MemberController@register');
     Route::post('/login', 'Service\MemberController@login');
     Route::post('/category/parent_id/{parent_id}', 'Service\BookController@getCategoryByParent');

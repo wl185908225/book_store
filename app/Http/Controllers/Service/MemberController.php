@@ -13,6 +13,7 @@ use App\Models\M3Email;
 use App\Tool\UUID;
 use Mail;
 use Log;
+use Session;
 
 class MemberController extends Controller
 {
@@ -82,7 +83,7 @@ class MemberController extends Controller
 
         $member = new Member;
         $member->phone = $phone;
-        $member->password = md5('bk' + $password);
+        $member->password = md5('bk' . $password);
         $member->save();
 
         $m3_result->status = 0;
@@ -102,9 +103,9 @@ class MemberController extends Controller
         return $m3_result->toJson();
       }
 
-      $validate_code_session = $request->session()->get('validate_code', '');
+      $validate_code_session = \Request::get('validate_code', '');
       Log::info('campare:$validate_code_session:' . $validate_code_session . '||$validate_code:' . $validate_code);
-      if($validate_code_session != $validate_code) {
+      if($validate_code_session !== $validate_code) {
         $m3_result->status = 8;
         $m3_result->message = '验证码不正确';
         return $m3_result->toJson();
@@ -121,16 +122,15 @@ class MemberController extends Controller
 
       $member = new Member;
       $member->email = $email;
-      $member->password = md5('bk' + $password);
+      $member->password = md5('bk' . $password);
       $member->save();
 
       $uuid = UUID::create();
-
       $m3_email = new M3Email;
       $m3_email->to = $email;
       $m3_email->cc = '185908225@qq.com';
       $m3_email->subject = '威廉书店验证';
-      $m3_email->content = '请于24小时点击该链接完成验证. www.study_laravel.com/service/validate_email'
+      $m3_email->content = '请于24小时点击该链接完成验证. ' . env('server_name') . '/service/validate_email'
                         . '?member_id=' . $member->id
                         . '&code=' . $uuid;
 
@@ -208,7 +208,7 @@ class MemberController extends Controller
     }
 
 
-    $validate_code_session = $request->session()->get('validate_code', '');
+    $validate_code_session = \Request::get('validate_code', '');
     if($validate_code != $validate_code_session)
     {
       $m3_result->status = 1;
@@ -232,7 +232,7 @@ class MemberController extends Controller
       return $m3_result->toJson();
     } else 
     {
-      if(md5('bk' + $password) != $member->password)
+      if(md5('bk' . $password) != $member->password)
       {
         $m3_result->status = 3;
         $m3_result->message = '密码不正确';
@@ -240,7 +240,7 @@ class MemberController extends Controller
       }
     }
 
-    $request->session()->put('member', $member);
+    Session::put('member', $member);
 
     $m3_result->status = 0;
     $m3_result->message = '登录成功';

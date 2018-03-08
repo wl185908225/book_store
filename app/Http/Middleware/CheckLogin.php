@@ -17,7 +17,7 @@ class CheckLogin
     {
         $http_referer = $_SERVER['HTTP_REFERER'];
 
-        $member = $request->session()->get('member', '');
+        $member = \Request::get('member', '');
         if(empty($member))
         {
             return redirect('/login?return_url=' . urlencode($http_referer));

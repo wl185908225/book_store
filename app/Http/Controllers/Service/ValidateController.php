@@ -12,15 +12,16 @@ use App\Models\M3Result;
 use App\Entity\TempEmail;
 use App\Entity\Member;
 use Log;
+use Session;
 
 class ValidateController extends Controller
 {
   public function create(Request $request)
   {
     $validateCode = new ValidateCode;
-    $request->session()->put('validate_code', $validateCode->getCode());
+    Session::put('validate_code', $validateCode->getCode());
     Log::info('code:' . $validateCode->getCode());
-    Log::info('getcode:' . $request->session()->get('validate_code'));
+    Log::info('getcode:' . Session::get('validate_code'));
     
     return $validateCode->doimg();
   }
